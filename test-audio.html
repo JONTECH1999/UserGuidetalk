@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audio Diagnostic Tool</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #333;
+    }
+    .status {
+      margin: 20px 0;
+      padding: 15px;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+    .status.good {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .status.bad {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      background-color: #000;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 10px 5px;
+    }
+    button:hover {
+      background-color: #333;
+    }
+    .log {
+      background-color: #f0f0f0;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+      font-family: monospace;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .log-entry {
+      padding: 5px 0;
+      border-bottom: 1px solid #ddd;
+    }
+    .log-entry:last-child {
+      border-bottom: none;
+    }
+    .error {
+      color: #d32f2f;
+    }
+    .success {
+      color: #388e3c;
+    }
+    .info {
+      color: #1976d2;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔊 Audio Diagnostic Tool</h1>
+    
+    <h2>System Check</h2>
+    <div id="systemStatus"></div>
+    
+    <h2>Test Audio</h2>
+    <button onclick="testSimpleAudio()">Test 1: Simple "Hello"</button>
+    <button onclick="testGuideAudio()">Test 2: Guide Content</button>
+    <button onclick="testVoices()">Test 3: List All Voices</button>
+    <button onclick="clearLog()">Clear Log</button>
+    
+    <h2>Troubleshooting Steps</h2>
+    <ul>
+      <li><strong>No Sound?</strong> Check if your speakers/headphones are muted or volume is turned down</li>
+      <li><strong>Still No Sound?</strong> Try a different browser (Chrome, Edge, Firefox, Safari)</li>
+      <li><strong>Still Nothing?</strong> Try clicking the buttons above to test if ANY audio works</li>
+      <li><strong>If buttons work but guide doesn't:</strong> The guide app may have a JavaScript error</li>
+    </ul>
+    
+    <h2>Activity Log</h2>
+    <div class="log" id="logContainer"></div>
+  </div>
+
+  <script>
+    function log(message, type = 'info') {
+      const container = document.getElementById('logContainer');
+      const entry = document.createElement('div');
+      entry.className = `log-entry ${type}`;
+      entry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+      container.appendChild(entry);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function clearLog() {
+      document.getElementById('logContainer').innerHTML = '';
+    }
+
+    function checkSystem() {
+      const status = document.getElementById('systemStatus');
+      status.innerHTML = '';
+      
+      // Check Web Speech API
+      const synth = window.speechSynthesis;
+      if (!synth) {
+        const div = document.createElement('div');
+        div.className = 'status bad';
+        div.textContent = '❌ Web Speech API NOT supported in this browser';
+        status.appendChild(div);
+        log('Web Speech API not supported', 'error');
+        return;
+      }
+      
+      let div = document.createElement('div');
+      div.className = 'status good';
+      div.textContent = '✅ Web Speech API is supported';
+      status.appendChild(div);
+      log('Web Speech API supported', 'success');
+      
+      // Check voices
+      const voices = synth.getVoices();
+      div = document.createElement('div');
+      div.className = 'status good';
+      div.textContent = `✅ ${voices.length} voices available`;
+      status.appendChild(div);
+      log(`${voices.length} voices available`, 'success');
+      
+      if (voices.length > 0) {
+        log(`First voice: ${voices[0].name} (${voices[0].lang})`, 'info');
+      }
+    }
+
+    function testSimpleAudio() {
+      const synth = window.speechSynthesis;
+      if (!synth) {
+        log('Web Speech API not available', 'error');
+        return;
+      }
+
+      synth.cancel();
+      const utterance = new SpeechSynthesisUtterance('Testing audio. One, two, three. Can you hear me?');
+      utterance.rate = 1.0;
+      utterance.volume = 1.0;
+
+      utterance.onstart = () => {
+        log('🔊 Audio started playing', 'success');
+      };
+
+      utterance.onend = () => {
+        log('✅ Audio playback completed', 'success');
+      };
+
+      utterance.onerror = (e) => {
+        log(`❌ Audio error: ${e.error}`, 'error');
+      };
+
+      log('▶️ Starting audio test...', 'info');
+      synth.speak(utterance);
+    }
+
+    function testGuideAudio() {
+      const synth = window.speechSynthesis;
+      if (!synth) {
+        log('Web Speech API not available', 'error');
+        return;
+      }
+
+      const guideText = `Blind Assistive Head Tech User Guide. Introduction. The Blind Assistive Head Tech is a wearable headband designed to help visually impaired individuals navigate safely and independently. This is a test of the guide audio.`;
+
+      synth.cancel();
+      const utterance = new SpeechSynthesisUtterance(guideText);
+      utterance.rate = 1.0;
+      utterance.volume = 1.0;
+
+      utterance.onstart = () => {
+        log('🔊 Guide audio started', 'success');
+      };
+
+      utterance.onend = () => {
+        log('✅ Guide audio completed', 'success');
+      };
+
+      utterance.onerror = (e) => {
+        log(`❌ Guide audio error: ${e.error}`, 'error');
+      };
+
+      log('▶️ Starting guide audio test...', 'info');
+      synth.speak(utterance);
+    }
+
+    function testVoices() {
+      const synth = window.speechSynthesis;
+      if (!synth) {
+        log('Web Speech API not available', 'error');
+        return;
+      }
+
+      const voices = synth.getVoices();
+      log(`Found ${voices.length} voices:`, 'info');
+      
+      voices.slice(0, 5).forEach((voice, index) => {
+        log(`  ${index + 1}. ${voice.name} (${voice.lang})${voice.default ? ' [DEFAULT]' : ''}`, 'info');
+      });
+    }
+
+    // Run system check on load
+    window.addEventListener('load', checkSystem);
+
+    // Also check voices after they load
+    if (window.speechSynthesis && window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = checkSystem;
+    }
+  </script>
+</body>
+</html>
