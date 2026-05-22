@@ -20,7 +20,7 @@ const SimplePlaybackControls = ({
   disabled = false,
 }) => {
   return (
-    <div className="w-full bg-white rounded-3xl p-8 space-y-6 border-4 border-black">
+    <div className="w-full bg-white rounded-3xl p-8 md:p-10 space-y-8 border-4 border-black shadow-lg">
       {/* Current Section Status */}
       <motion.div
         className="text-center p-4 bg-gray-100 rounded-2xl"

@@ -275,7 +275,7 @@ function App() {
       </motion.header>
 
       {/* Main Content */}
-      <main id="main-content" className="max-w-6xl mx-auto p-4 md:p-6 space-y-6">
+      <main id="main-content" className="max-w-4xl mx-auto px-4 md:px-6 py-6 space-y-8">
         {/* Start Message - Before user interaction */}
         {!hasStarted && (
           <motion.div
@@ -300,6 +300,7 @@ function App() {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
+            className="sticky top-4 z-10 mb-8 bg-white rounded-3xl shadow-lg p-1"
           >
             <SimplePlaybackControls
               isPlaying={isPlaying}
@@ -318,7 +319,7 @@ function App() {
           {hasStarted && section && (
             <motion.div
               key={currentSection}
-              className="bg-blue-50 p-6 rounded-2xl border-4 border-blue-500"
+              className="bg-blue-50 p-8 md:p-10 rounded-3xl border-4 border-blue-500 shadow-lg mt-8"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
@@ -326,11 +327,13 @@ function App() {
               aria-label="Current guide section"
               aria-live="polite"
             >
-              <h2 className="text-2xl md:text-3xl font-bold text-black mb-4">{section.title}</h2>
-              <p className="text-lg leading-relaxed text-black mb-4">{section.content}</p>
-              <p className="text-sm text-gray-700 font-bold">
-                Section {currentSection + 1} of {MAX_SECTION + 1}
-              </p>
+              <h2 className="text-3xl md:text-4xl font-bold text-black mb-6">{section.title}</h2>
+              <p className="text-xl leading-relaxed text-black mb-8 whitespace-pre-wrap">{section.content}</p>
+              <div className="border-t-3 border-blue-300 pt-6">
+                <p className="text-base text-gray-700 font-bold">
+                  📍 Section {currentSection + 1} of {MAX_SECTION + 1}
+                </p>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -340,8 +343,8 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white p-4 mt-8 text-center border-t-4 border-blue-500">
-        <p className="text-sm">© 2024 Blind Assistive Head Tech - Accessible Audio Guide</p>
+      <footer className="bg-gray-900 text-white p-6 mt-12 text-center border-t-4 border-blue-500">
+        <p className="text-sm md:text-base">© 2024 Blind Assistive Head Tech - Accessible Audio Guide</p>
       </footer>
     </div>
   )
