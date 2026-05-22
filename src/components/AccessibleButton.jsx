@@ -32,14 +32,15 @@ const AccessibleButton = ({
 
   const handleClick = (e) => {
     if (!disabled && onClick) {
-      // Haptic feedback
+      // Haptic feedback - strong confirmation
       if (haptic && navigator.vibrate) {
-        navigator.vibrate([50, 30, 50])
+        navigator.vibrate([100, 50, 100])
       }
 
-      // Announce action being performed (for click-based activation)
+      // Announce action being performed with full context
       const fullLabel = e.currentTarget.getAttribute('aria-label') || label
-      TextToSpeechService.speakFeedback(`Activated: ${fullLabel}`, { interrupt: false, rate: 1 })
+      const announcement = `${fullLabel}. Activated.`
+      TextToSpeechService.speakFeedback(announcement, { interrupt: false, rate: 1.2 })
 
       // Call the onClick handler
       onClick(e)
@@ -57,14 +58,14 @@ const AccessibleButton = ({
         wasPausedByHoverRef.current = false
       }
 
-      // Speak the button label with full aria-label for context
+      // Speak the button label with full aria-label for context - faster delivery
       const fullLabel = e.currentTarget.getAttribute('aria-label') || label
-      TextToSpeechService.speakFeedback(fullLabel, { interrupt: false, rate: 1 })
+      TextToSpeechService.speakFeedback(`${fullLabel}. Press enter to activate.`, { interrupt: false, rate: 1.3 })
       hasAnnouncedHoverRef.current = true
 
       // Haptic feedback for keyboard focus
       if (haptic && navigator.vibrate) {
-        navigator.vibrate(15)
+        navigator.vibrate([30, 10, 30])
       }
     }
 

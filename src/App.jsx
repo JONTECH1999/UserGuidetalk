@@ -1,12 +1,13 @@
 /**
  * Main App Component
  * Blind Assistive Head Tech - Audio User Guide
- * Simplified for blind users: Auto-play, 4 buttons only
+ * Fully Accessible: Auto-play, Voice Feedback, Keyboard Navigation
+ * Optimized for blind users with screen readers
  */
 
 import React, { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FaHeadphones } from 'react-icons/fa'
+import { FaHeadphones, FaVolumeUp } from 'react-icons/fa'
 import SimplePlaybackControls from './components/SimplePlaybackControls'
 import AIAssistant from './components/AIAssistant'
 import GuideContent from './components/GuideContent'
@@ -261,15 +262,16 @@ function App() {
 
       {/* Header */}
       <motion.header
-        className="bg-black text-white p-4 border-b-4 border-blue-500"
+        className="bg-black text-white p-4 md:p-6 border-b-4 border-blue-500"
         initial={{ y: -100 }}
         animate={{ y: 0 }}
+        role="banner"
       >
         <div className="max-w-6xl mx-auto flex items-center gap-3">
           <FaHeadphones size={36} className="text-blue-400" aria-hidden="true" />
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold">Blind Assistive Head Tech</h1>
-            <p className="text-sm md:text-base text-gray-300">Audio Guide - Auto-Playing</p>
+            <h1 className="text-2xl md:text-3xl font-bold">Blind Assistive Head Tech Guide</h1>
+            <p className="text-sm md:text-base text-gray-300">Complete Audio Guide with Keyboard Navigation</p>
           </div>
         </div>
       </motion.header>
@@ -279,18 +281,28 @@ function App() {
         {/* Start Message - Before user interaction */}
         {!hasStarted && (
           <motion.div
-            className="bg-blue-100 border-4 border-blue-500 p-8 rounded-2xl text-center"
+            className="bg-blue-100 border-4 border-blue-500 p-8 md:p-10 rounded-3xl text-center"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             role="region"
             aria-live="assertive"
             aria-label="Start instruction"
           >
-            <p className="text-2xl font-bold mb-4 text-black">Ready to Begin</p>
-            <p className="text-lg text-black mb-4">Press any key, tap the screen, or click anywhere to start the audio guide.</p>
-            <p className="text-base text-gray-700">The guide will automatically play all sections.</p>
+            <p className="text-2xl md:text-3xl font-bold mb-4 text-black">Ready to Begin Guide</p>
+            <div className="space-y-4 text-left md:text-center">
+              <p className="text-lg text-black mb-4">The Blind Assistive Head Tech audio guide will start automatically on any interaction.</p>
+              <div className="bg-white p-4 rounded-lg border-2 border-blue-300 space-y-2">
+                <p className="font-bold text-black">How to use:</p>
+                <ul className="text-base text-black space-y-2 list-disc list-inside">
+                  <li><strong>Touch or tap anywhere</strong> on the screen to start</li>
+                  <li><strong>Space bar</strong> to pause/resume</li>
+                  <li><strong>Right arrow</strong> for next section</li>
+                  <li><strong>Left arrow</strong> for previous section</li>
+                </ul>
+              </div>
+            </div>
             <div className="sr-only" role="status">
-              Guide is ready. Press any key, tap, or click to start playing the audio guide.
+              Guide is ready. Press any key, tap, or click to start the audio guide. Use arrow keys to navigate between sections, space bar to pause and resume.
             </div>
           </motion.div>
         )}
@@ -343,8 +355,11 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white p-6 mt-12 text-center border-t-4 border-blue-500">
-        <p className="text-sm md:text-base">© 2024 Blind Assistive Head Tech - Accessible Audio Guide</p>
+      <footer className="bg-gray-900 text-white p-6 md:p-8 mt-12 text-center border-t-4 border-blue-500" role="contentinfo">
+        <div className="space-y-3">
+          <p className="text-sm md:text-base">© 2024 Blind Assistive Head Tech - Fully Accessible Audio Guide</p>
+          <p className="text-xs md:text-sm text-gray-400">Optimized for blind and visually impaired users with screen reader support</p>
+        </div>
       </footer>
     </div>
   )
