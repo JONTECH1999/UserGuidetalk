@@ -20,6 +20,11 @@ class TextToSpeechService {
    * Speak text with full accessibility support
    */
   speak(text, options = {}) {
+    // Cancel any existing speech to speak immediately
+    if (this.synth.speaking) {
+      this.synth.cancel()
+    }
+
     this.currentText = text
     const utterance = new SpeechSynthesisUtterance(text)
 
@@ -37,34 +42,40 @@ class TextToSpeechService {
 
     // Set all event handlers BEFORE speaking
     utterance.onstart = () => {
+      console.log('🔊 Speech started')
       this.isPaused = false
       this.notifyStateChange('speaking', text)
       this.triggerHaptic(50)
     }
 
     utterance.onpause = () => {
+      console.log('⏸️ Speech paused')
       this.isPaused = true
       this.notifyStateChange('paused')
     }
 
     utterance.onresume = () => {
+      console.log('▶️ Speech resumed')
       this.isPaused = false
       this.notifyStateChange('resumed')
     }
 
     utterance.onend = () => {
+      console.log('✓ Speech ended')
       this.isPaused = false
       this.currentUtterance = null
       this.notifyStateChange('completed')
     }
 
     utterance.onerror = (event) => {
+      console.error('❌ Speech error:', event.error)
       this.isPaused = false
       this.currentUtterance = null
       this.notifyStateChange('error', event.error)
     }
 
     this.currentUtterance = utterance
+    console.log('📢 Attempting to speak:', text.substring(0, 50) + '...')
     this.synth.speak(utterance)
   }
 

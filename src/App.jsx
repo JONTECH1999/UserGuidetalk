@@ -43,9 +43,14 @@ function App() {
       
       const section = userGuideContent[0]
       if (section) {
-        TextToSpeechService.speak(section.content, { rate: SPEECH_RATE })
-        setIsPlaying(true)
-        announceToScreenReader(`Guide started: ${section.title}`)
+        // Speak immediately without delay
+        try {
+          TextToSpeechService.speak(section.content, { rate: SPEECH_RATE })
+          setIsPlaying(true)
+          announceToScreenReader(`Guide started: ${section.title}`)
+        } catch (e) {
+          console.error('Error starting guide:', e)
+        }
       }
     }
   }, [hasInitialized, announceToScreenReader])
@@ -126,24 +131,47 @@ function App() {
 
   // ===== INITIALIZE ON FIRST USER INTERACTION =====
   useEffect(() => {
-    const handleFirstInteraction = () => {
+    const handleFirstInteraction = (e) => {
+      // Prevent default only on touch events to ensure they register
+      if (e.type === 'touchstart' || e.type === 'touchend') {
+        e.preventDefault?.()
+      }
+
       if (!hasInitialized) {
         startGuide()
       }
       // Remove listeners after first interaction
       window.removeEventListener('click', handleFirstInteraction)
-      window.removeEventListener('touchstart', handleFirstInteraction)
+      window.removeEventListener('touchstart', handleFirstInteraction, { passive: false })
+      window.removeEventListener('touchend', handleFirstInteraction, { passive: false })
       window.removeEventListener('keydown', handleFirstInteraction)
+      document.removeEventListener('click', handleFirstInteraction)
+      document.removeEventListener('touchstart', handleFirstInteraction, { passive: false })
+      document.removeEventListener('touchend', handleFirstInteraction, { passive: false })
+      document.removeEventListener('keydown', handleFirstInteraction)
     }
 
+    // Add listeners with passive: false for touch events to allow preventDefault
     window.addEventListener('click', handleFirstInteraction)
-    window.addEventListener('touchstart', handleFirstInteraction)
+    window.addEventListener('touchstart', handleFirstInteraction, { passive: false })
+    window.addEventListener('touchend', handleFirstInteraction, { passive: false })
     window.addEventListener('keydown', handleFirstInteraction)
+    
+    // Also add to document as backup for mobile
+    document.addEventListener('click', handleFirstInteraction)
+    document.addEventListener('touchstart', handleFirstInteraction, { passive: false })
+    document.addEventListener('touchend', handleFirstInteraction, { passive: false })
+    document.addEventListener('keydown', handleFirstInteraction)
 
     return () => {
       window.removeEventListener('click', handleFirstInteraction)
-      window.removeEventListener('touchstart', handleFirstInteraction)
+      window.removeEventListener('touchstart', handleFirstInteraction, { passive: false })
+      window.removeEventListener('touchend', handleFirstInteraction, { passive: false })
       window.removeEventListener('keydown', handleFirstInteraction)
+      document.removeEventListener('click', handleFirstInteraction)
+      document.removeEventListener('touchstart', handleFirstInteraction, { passive: false })
+      document.removeEventListener('touchend', handleFirstInteraction, { passive: false })
+      document.removeEventListener('keydown', handleFirstInteraction)
     }
   }, [hasInitialized, startGuide])
 
