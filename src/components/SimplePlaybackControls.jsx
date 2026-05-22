@@ -23,20 +23,20 @@ const SimplePlaybackControls = ({
     <div className="w-full bg-white rounded-3xl p-8 md:p-10 space-y-8 border-4 border-black shadow-lg">
       {/* Current Section Status */}
       <motion.div
-        className="text-center p-4 bg-gray-100 rounded-2xl"
+        className="text-center p-3 md:p-4 bg-gray-100 rounded-2xl"
         aria-live="polite"
         aria-atomic="true"
       >
-        <p className="text-2xl font-bold mb-2">
+        <p className="text-xl md:text-2xl font-bold mb-2">
           {isPlaying && !isPaused ? '▶️ Playing' : isPaused ? '⏸️ Paused' : '⏹️ Stopped'}
         </p>
-        <p className="text-xl font-bold" aria-label={`Section ${currentSection + 1} of ${totalSections + 1}`}>
+        <p className="text-lg md:text-xl font-bold" aria-label={`Section ${currentSection + 1} of ${totalSections + 1}`}>
           Section {currentSection + 1} of {totalSections + 1}
         </p>
       </motion.div>
 
       {/* Main Controls - 3 Large Buttons */}
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-3 gap-4 md:gap-6">
         {/* Previous Button */}
         <AccessibleButton
           label="Previous"
@@ -45,7 +45,7 @@ const SimplePlaybackControls = ({
           variant="secondary"
           ariaLabel={`Go to previous section${currentSection > 0 ? ': ' + currentSection : ''}`}
           size="large"
-          icon={<FaChevronLeft size={40} />}
+          icon={<FaChevronLeft size={32} className="md:block" style={{width: '32px', height: '32px'}} />}
         />
 
         {/* Pause/Play Button */}
@@ -57,7 +57,7 @@ const SimplePlaybackControls = ({
           ariaLabel={isPlaying && !isPaused ? 'Pause playback' : 'Resume playback'}
           ariaPressed={isPlaying && !isPaused}
           size="large"
-          icon={<FaPause size={40} />}
+          icon={<FaPause size={32} className="md:block" style={{width: '32px', height: '32px'}} />}
         />
 
         {/* Next Button */}
@@ -68,7 +68,7 @@ const SimplePlaybackControls = ({
           variant="secondary"
           ariaLabel={`Go to next section${currentSection < totalSections ? ': ' + (currentSection + 2) : ''}`}
           size="large"
-          icon={<FaChevronRight size={40} />}
+          icon={<FaChevronRight size={32} className="md:block" style={{width: '32px', height: '32px'}} />}
         />
       </div>
 
