@@ -45,6 +45,11 @@ function App() {
       if (section) {
         // Speak immediately without delay
         try {
+          // Ensure voices are initialized for Firefox/Safari
+          if (TextToSpeechService.initializeVoices) {
+            TextToSpeechService.initializeVoices()
+          }
+          
           TextToSpeechService.speak(section.content, { rate: SPEECH_RATE })
           setIsPlaying(true)
           announceToScreenReader(`Guide started: ${section.title}`)

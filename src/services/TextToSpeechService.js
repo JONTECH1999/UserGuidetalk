@@ -14,6 +14,66 @@ class TextToSpeechService {
     this.currentRate = 1
     this.currentPitch = 1
     this.currentVolume = 1
+    this.voicesReady = false
+    this.availableVoices = []
+
+    // Initialize voices on load and listen for updates
+    this.initializeVoices()
+    
+    // Some browsers load voices asynchronously
+    if (this.synth.onvoiceschanged !== undefined) {
+      this.synth.onvoiceschanged = () => {
+        this.availableVoices = this.synth.getVoices()
+        this.voicesReady = true
+        console.log('🎤 Voices loaded:', this.availableVoices.length, 'available')
+      }
+    }
+  }
+
+  /**
+   * Initialize voices list (handles async voice loading in different browsers)
+   */
+  initializeVoices() {
+    try {
+      const voices = this.synth.getVoices()
+      if (voices.length > 0) {
+        this.availableVoices = voices
+        this.voicesReady = true
+        console.log('🎤 Voices ready:', voices.length, 'available')
+      } else {
+        console.log('⏳ Waiting for voices to load (common in Firefox/Safari)...')
+        // Voices will load via voiceschanged event
+        this.voicesReady = false
+      }
+    } catch (e) {
+      console.warn('⚠️ Could not load voices:', e.message)
+      this.voicesReady = false
+    }
+  }
+
+  /**
+   * Get the best available voice for the user
+   */
+  getBestVoice() {
+    try {
+      // Use cached voices if available
+      const voices = this.availableVoices.length > 0 ? this.availableVoices : this.synth.getVoices()
+      
+      if (voices.length === 0) {
+        console.warn('⚠️ No voices available - speech may not work')
+        return null
+      }
+
+      // Try to find an English voice
+      const englishVoice = voices.find(v => v.lang.startsWith('en-US')) || 
+                          voices.find(v => v.lang.startsWith('en')) ||
+                          voices[0]
+      
+      return englishVoice || null
+    } catch (e) {
+      console.warn('⚠️ Error selecting voice:', e.message)
+      return null
+    }
   }
 
   /**
@@ -33,11 +93,12 @@ class TextToSpeechService {
     utterance.pitch = options.pitch || this.currentPitch
     utterance.volume = Math.max(0, Math.min(1, options.volume || this.currentVolume))
 
-    // Set a voice - this is important
-    const voices = this.synth.getVoices()
-    if (voices.length > 0) {
-      const englishVoice = voices.find(v => v.lang.startsWith('en')) || voices[0]
-      utterance.voice = englishVoice
+    // Set voice using improved voice selection
+    const voice = this.getBestVoice()
+    if (voice) {
+      utterance.voice = voice
+    } else {
+      console.warn('⚠️ No voice available - using browser default')
     }
 
     // Set all event handlers BEFORE speaking
@@ -69,6 +130,7 @@ class TextToSpeechService {
 
     utterance.onerror = (event) => {
       console.error('❌ Speech error:', event.error)
+      console.log('💡 Tip: Some browsers (Firefox, Safari) have limited Web Speech API support')
       this.isPaused = false
       this.currentUtterance = null
       this.notifyStateChange('error', event.error)
@@ -76,7 +138,11 @@ class TextToSpeechService {
 
     this.currentUtterance = utterance
     console.log('📢 Attempting to speak:', text.substring(0, 50) + '...')
-    this.synth.speak(utterance)
+    try {
+      this.synth.speak(utterance)
+    } catch (e) {
+      console.error('❌ Speech synthesis error:', e.message)
+    }
   }
 
   /**
@@ -105,11 +171,10 @@ class TextToSpeechService {
     utterance.volume = Math.max(0, Math.min(1, volume))
     utterance.pitch = 1.0
 
-    // Get voices
-    const voices = this.synth.getVoices()
-    if (voices.length > 0) {
-      const englishVoice = voices.find(v => v.lang.startsWith('en')) || voices[0]
-      utterance.voice = englishVoice
+    // Set voice using improved voice selection
+    const voice = this.getBestVoice()
+    if (voice) {
+      utterance.voice = voice
     }
 
     // Set event handlers
