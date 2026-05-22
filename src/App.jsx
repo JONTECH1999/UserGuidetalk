@@ -295,7 +295,7 @@ function App() {
           </motion.div>
         )}
 
-        {/* Simple Playback Controls - 4 Buttons Only */}
+        {/* Simple Playback Controls - 3 Buttons Only */}
         {hasStarted && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -309,7 +309,6 @@ function App() {
               onPause={handlePause}
               onNext={handleNext}
               onPrevious={handlePrevious}
-              onAskAI={() => setShowAIAssistant(!showAIAssistant)}
             />
           </motion.div>
         )}
@@ -337,9 +336,7 @@ function App() {
         </AnimatePresence>
 
         {/* AI Assistant */}
-        <AnimatePresence>
-          {showAIAssistant && hasStarted && <AIAssistant />}
-        </AnimatePresence>
+        {/* Removed - AI button has been removed from the interface */}
       </main>
 
       {/* Footer */}

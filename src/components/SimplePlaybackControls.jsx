@@ -1,14 +1,13 @@
 /**
  * Simple Playback Controls Component
- * Only 4 buttons for blind user convenience
- * Row 1: Previous, Pause/Play, Next
- * Row 2: Ask AI
+ * 3 large buttons for blind user convenience
+ * Row 1: Previous, Pause/Play, Next (full screen width)
  */
 
 import React from 'react'
 import AccessibleButton from './AccessibleButton'
 import { motion } from 'framer-motion'
-import { FaPause, FaChevronLeft, FaChevronRight, FaRobot } from 'react-icons/fa'
+import { FaPause, FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 
 const SimplePlaybackControls = ({
   isPlaying,
@@ -18,7 +17,6 @@ const SimplePlaybackControls = ({
   onPause,
   onNext,
   onPrevious,
-  onAskAI,
   disabled = false,
 }) => {
   return (
@@ -37,8 +35,8 @@ const SimplePlaybackControls = ({
         </p>
       </motion.div>
 
-      {/* Main Controls - Row 1: 3 Buttons */}
-      <div className="grid grid-cols-3 gap-4">
+      {/* Main Controls - 3 Large Buttons */}
+      <div className="grid grid-cols-3 gap-6">
         {/* Previous Button */}
         <AccessibleButton
           label="Previous"
@@ -47,7 +45,7 @@ const SimplePlaybackControls = ({
           variant="secondary"
           ariaLabel={`Go to previous section${currentSection > 0 ? ': ' + currentSection : ''}`}
           size="large"
-          icon={<FaChevronLeft size={28} />}
+          icon={<FaChevronLeft size={40} />}
         />
 
         {/* Pause/Play Button */}
@@ -59,7 +57,7 @@ const SimplePlaybackControls = ({
           ariaLabel={isPlaying && !isPaused ? 'Pause playback' : 'Resume playback'}
           ariaPressed={isPlaying && !isPaused}
           size="large"
-          icon={<FaPause size={28} />}
+          icon={<FaPause size={40} />}
         />
 
         {/* Next Button */}
@@ -70,23 +68,8 @@ const SimplePlaybackControls = ({
           variant="secondary"
           ariaLabel={`Go to next section${currentSection < totalSections ? ': ' + (currentSection + 2) : ''}`}
           size="large"
-          icon={<FaChevronRight size={28} />}
+          icon={<FaChevronRight size={40} />}
         />
-      </div>
-
-      {/* Ask AI Button - Row 2 */}
-      <div className="flex justify-center">
-        <div className="w-full max-w-xs">
-          <AccessibleButton
-            label="Ask AI"
-            onClick={onAskAI}
-            disabled={disabled}
-            variant="secondary"
-            ariaLabel="Ask AI questions about the guide"
-            size="large"
-            icon={<FaRobot size={28} />}
-          />
-        </div>
       </div>
 
     </div>

@@ -195,7 +195,7 @@ const AccessibleButton = ({
   }
 
   const sizeStyles = {
-    large: 'px-8 py-6 text-2xl min-h-24 min-w-24',
+    large: 'px-6 py-6 text-2xl min-h-28 min-w-24',
     medium: 'px-6 py-4 text-xl min-h-20 min-w-20',
     small: 'px-4 py-3 text-lg min-h-16 min-w-16',
   }
