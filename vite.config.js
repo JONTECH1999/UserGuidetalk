@@ -2,12 +2,16 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
-export default defineConfig({
-  plugins: [
-    react({ babel: false }),
+// Disable PWA on Netlify builds to avoid dynamic require issues
+const isNetlify = !!process.env.NETLIFY
+const plugins = [react({ babel: false })]
+
+if (!isNetlify) {
+  plugins.push(
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+      inlineManifest: false,
+      strategies: 'generateSW',
       manifest: {
         name: 'Blind Assistive Head Tech - User Guide',
         short_name: 'Head Tech Guide',
@@ -48,9 +52,9 @@ export default defineConfig({
         skipWaiting: true
       }
     })
-  ],
-  server: {
-    port: 5173,
-    open: true
-  }
+  )
+}
+
+export default defineConfig({
+  plugins
 })
